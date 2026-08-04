@@ -1,0 +1,255 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Emerald City Repairs — Renovation Cost Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sound:#10403C; --fir:#2F5D50; --madrona:#B4552F; --madrona-deep:#9C4526;
+  --ink:#2A2C2B; --fog:#F2F1ED; --mist:#DCDCD6; --line:#C9C8C0; --g200:#8FB5A5;
+  --display:'Archivo',system-ui,sans-serif; --body:'Newsreader',Georgia,serif; --mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fog);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6}
+.wrap{max-width:1200px;margin:0 auto;padding:clamp(24px,5vw,56px) clamp(16px,5vw,40px) 64px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--fir);margin:0 0 14px}
+h1{font-family:var(--display);font-weight:800;letter-spacing:-.03em;font-size:clamp(32px,5.2vw,58px);line-height:1.02;margin:0 0 16px;color:var(--sound)}
+.lede{max-width:62ch;margin:0 0 34px;color:#4a5350}
+.tabs{display:flex;gap:2px;flex-wrap:wrap;margin-bottom:30px;border-bottom:1px solid var(--line)}
+.tab{font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:-.01em;padding:13px 20px;border:0;background:transparent;color:var(--fir);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px}
+.tab[aria-selected="true"]{color:var(--sound);border-bottom-color:var(--madrona)}
+.tab:hover{color:var(--sound)}
+.scale{background:var(--sound);color:var(--fog);border-radius:2px;padding:22px clamp(16px,3vw,28px);margin-bottom:34px}
+.scale h2{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--g200);margin:0 0 18px;font-weight:500}
+.axis{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--g200);border-bottom:1px solid rgba(143,181,165,.32);padding-bottom:7px;margin-bottom:16px}
+.pins{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.pin{border-left:2px solid var(--g200);padding-left:11px}
+.pin b{display:block;font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:-.01em;color:var(--fog)}
+.pin span{font-family:var(--mono);font-size:14px;color:var(--g200)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:2px;padding:26px 24px;display:flex;flex-direction:column}
+.num{font-family:var(--mono);font-size:12px;color:var(--madrona-deep);letter-spacing:.1em;margin-bottom:9px}
+.card h3{font-family:var(--display);font-weight:800;letter-spacing:-.02em;font-size:22px;margin:0 0 4px;color:var(--sound)}
+.sub{font-size:15px;color:var(--fir);margin:0 0 18px}
+.price{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px 0;margin-bottom:18px}
+.price .k{font-family:var(--mono);font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--fir);display:block;margin-bottom:5px}
+.price .v{font-family:var(--display);font-weight:800;font-size:27px;letter-spacing:-.03em;color:var(--sound)}
+.price .t{font-family:var(--mono);font-size:12px;color:var(--fir);display:block;margin-top:5px}
+ul{list-style:none;margin:0 0 18px;padding:0;font-size:15.5px}
+li{position:relative;padding-left:17px;margin-bottom:9px;color:#3d4644}
+li:before{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;background:var(--g200);transform:rotate(45deg)}
+.note{margin-top:auto;background:var(--fog);border-left:2px solid var(--madrona);padding:12px 14px;font-size:14.5px;color:#3d4644}
+.note b{color:var(--sound)}
+.roi{font-family:var(--mono);font-size:12.5px;color:var(--fir);margin-bottom:16px}
+.roi b{color:var(--sound);font-size:14px}
+.foot{margin-top:34px;padding-top:22px;border-top:1px solid var(--line);font-size:15px;color:#4a5350;max-width:74ch}
+.cta{display:inline-block;margin-top:22px;background:var(--madrona);color:#fff;font-family:var(--display);font-weight:700;font-size:16px;text-decoration:none;padding:15px 26px;border-radius:2px}
+.cta:hover{background:var(--madrona-deep)}
+.lic{font-family:var(--mono);font-size:11.5px;color:var(--fir);margin-top:26px;letter-spacing:.03em}
+[hidden]{display:none!important}
+@media (max-width:640px){.pins{grid-template-columns:repeat(2,1fr);gap:16px}}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Real Seattle numbers · No email required</p>
+  <h1>What will your remodel actually cost?</h1>
+  <p class="lede">These are the same ranges we work from — not teaser pricing. Pick a project to see honest Seattle bands, timelines, and what each tier really includes.</p>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-panel="bath">Bathroom remodel</button>
+    <button class="tab" role="tab" aria-selected="false" data-panel="tub">Tub-to-shower</button>
+    <button class="tab" role="tab" aria-selected="false" data-panel="kitchen">Kitchen</button>
+  </div>
+
+  <!-- BATHROOM -->
+  <section id="bath">
+    <div class="scale">
+      <h2>Where each tier lands · $0–$80K</h2>
+      <div class="axis"><span>$20K</span><span>$40K</span><span>$60K</span></div>
+      <div class="pins">
+        <div class="pin"><b>Budget refresh</b><span>~$8.5K</span></div>
+        <div class="pin"><b>Midrange</b><span>avg $24,500</span></div>
+        <div class="pin"><b>Universal design</b><span>avg $40,000</span></div>
+        <div class="pin"><b>Upscale</b><span>avg $76,000</span></div>
+      </div>
+    </div>
+    <div class="cards">
+      <article class="card">
+        <div class="num">01</div><h3>Budget refresh</h3><p class="sub">Same layout, smart choices</p>
+        <div class="price"><span class="k">Sample build</span><span class="v">$8,000 – $9,500</span><span class="t">Typically 1–2 weeks</span></div>
+        <ul>
+          <li>Keep the existing layout — moving fixtures is where budgets die</li>
+          <li>Tub surround reglazing instead of new tile</li>
+          <li>Stock vanity with top, mid-range faucet, standard toilet</li>
+          <li>New floor tile, mirror and light, fresh paint and trim</li>
+        </ul>
+        <div class="note"><b>The honest catch:</b> this only works if your layout stays put and nothing hidden turns up behind the walls.</div>
+      </article>
+      <article class="card">
+        <div class="num">02</div><h3>Midrange</h3><p class="sub">Full renovation, same footprint</p>
+        <div class="price"><span class="k">Average</span><span class="v">$24,500</span><span class="t">Typically 3–4 weeks</span></div>
+        <ul>
+          <li>All four fixtures updated: toilet, sink, tub, shower</li>
+          <li>Durable, timeless finishes over high-end customization</li>
+          <li>No footprint expansion, no major layout change</li>
+        </ul>
+        <div class="roi">Resale value added <b>$19,500</b> · ~80% recouped — the strongest ROI tier</div>
+        <div class="note">Most West Seattle bathrooms land here. It is the tier we quote most often.</div>
+      </article>
+      <article class="card">
+        <div class="num">03</div><h3>Universal design</h3><p class="sub">Aging-in-place, done beautifully</p>
+        <div class="price"><span class="k">Average</span><span class="v">$40,000</span><span class="t">Typically 4–5 weeks</span></div>
+        <ul>
+          <li>Fully accessible 5×7 bath — without the clinical look</li>
+          <li>Widened entry, curbless shower, blocking for grab bars</li>
+          <li>Safety and usability with a clean residential finish</li>
+        </ul>
+        <div class="roi">Resale value added <b>$24,000</b> · ~60% recouped</div>
+        <div class="note">Growing fast in Seattle, and the tier most worth planning early.</div>
+      </article>
+      <article class="card">
+        <div class="num">04</div><h3>Upscale</h3><p class="sub">Expansion &amp; retreat</p>
+        <div class="price"><span class="k">Average</span><span class="v">$76,000</span><span class="t">Typically 6–9 weeks</span></div>
+        <ul>
+          <li>Primary bath expanded into a genuinely larger space</li>
+          <li>Layout redefined around comfort and openness</li>
+          <li>Experience-first — resale efficiency is not the goal</li>
+        </ul>
+        <div class="roi">Resale value added <b>$32,000</b> · ~42% recouped</div>
+        <div class="note">Footprint typically grows from ~35 to ~100 sq ft.</div>
+      </article>
+    </div>
+  </section>
+
+  <!-- TUB TO SHOWER -->
+  <section id="tub" hidden>
+    <div class="scale">
+      <h2>Where each tier lands · $0–$44K+</h2>
+      <div class="axis"><span>$10K</span><span>$20K</span><span>$30K</span><span>$40K</span></div>
+      <div class="pins">
+        <div class="pin"><b>Direct swap</b><span>$6,800–$11,500</span></div>
+        <div class="pin"><b>Tiled walk-in</b><span>$14,500–$21,000</span></div>
+        <div class="pin"><b>Curbless</b><span>$19,500–$31,000</span></div>
+        <div class="pin"><b>Inside a full remodel</b><span>$25,000–$44,000+</span></div>
+      </div>
+    </div>
+    <div class="cards">
+      <article class="card">
+        <div class="num">01</div><h3>Direct swap</h3><p class="sub">Acrylic or solid-surface</p>
+        <div class="price"><span class="k">Range</span><span class="v">$6,800 – $11,500</span><span class="t">Typically 3–5 working days</span></div>
+        <ul>
+          <li>Tub out, one-piece or multi-piece shower in — same footprint, same drain</li>
+          <li>New valve trim, glass door or curtain rod, patch and paint</li>
+          <li>Permanent, code-compliant, genuinely easy to clean</li>
+        </ul>
+        <div class="note">Anyone promising <b>one day</b> is selling a liner over your old tub — different product, different lifespan.</div>
+      </article>
+      <article class="card">
+        <div class="num">02</div><h3>Tiled walk-in</h3><p class="sub">Same footprint</p>
+        <div class="price"><span class="k">Range</span><span class="v">$14,500 – $21,000</span><span class="t">Typically 2–3 weeks</span></div>
+        <ul>
+          <li>Full waterproofing system and sloped pan</li>
+          <li>Floor-to-ceiling tile, niche, pressure-balancing valve</li>
+          <li>Semi-frameless glass panel · plumbing permit usually required</li>
+        </ul>
+        <div class="note">The tile isn't what fails — <b>the membrane underneath is</b>. Most of the labour happens before you ever see tile.</div>
+      </article>
+      <article class="card">
+        <div class="num">03</div><h3>Curbless</h3><p class="sub">Zero-threshold</p>
+        <div class="price"><span class="k">Range</span><span class="v">$19,500 – $31,000</span><span class="t">Typically 3–4 weeks</span></div>
+        <ul>
+          <li>Recessed or re-framed subfloor for a flush shower floor</li>
+          <li>Linear drain, extended waterproofing, larger glass</li>
+          <li>Bench and grab-bar blocking · building permit where framing changes</li>
+        </ul>
+        <div class="note"><b>The safest shower you can own</b> — and the best-looking one.</div>
+      </article>
+      <article class="card">
+        <div class="num">04</div><h3>Inside a full remodel</h3><p class="sub">Conversion as part of the whole room</p>
+        <div class="price"><span class="k">Range</span><span class="v">$25,000 – $44,000+</span><span class="t">Typically 4–6 weeks</span></div>
+        <ul>
+          <li>The conversion plus flooring, vanity, toilet, lighting</li>
+          <li>Exhaust ventilation, electrical, and finishes</li>
+          <li>Plumbing and electrical permits typical</li>
+        </ul>
+        <div class="note"><b>One project, one crew, one timeline</b> — instead of two renovations a year apart.</div>
+      </article>
+    </div>
+  </section>
+
+  <!-- KITCHEN -->
+  <section id="kitchen" hidden>
+    <div class="scale">
+      <h2>Where each tier lands · $0–$46K+</h2>
+      <div class="axis"><span>$10K</span><span>$20K</span><span>$30K</span><span>$40K</span></div>
+      <div class="pins">
+        <div class="pin"><b>Refresh</b><span>$9,000–$15,000</span></div>
+        <div class="pin"><b>Full, same layout</b><span>$20,000–$32,000</span></div>
+        <div class="pin"><b>Layout changes</b><span>$32,000–$46,000+</span></div>
+        <div class="pin"><b>Beyond</b><span>Scoped estimate</span></div>
+      </div>
+    </div>
+    <div class="cards">
+      <article class="card">
+        <div class="num">01</div><h3>Refresh</h3><p class="sub">Keep the boxes, change the room</p>
+        <div class="price"><span class="k">Range</span><span class="v">$9,000 – $15,000</span><span class="t">Typically 1–2 weeks</span></div>
+        <ul>
+          <li>Cabinet doors and hardware, not full replacement</li>
+          <li>New countertop, sink and faucet, tile backsplash</li>
+          <li>Flooring, lighting, paint</li>
+        </ul>
+        <div class="note">The cheapest real gain in a kitchen is nearly always <b>counters, backsplash and light</b>.</div>
+      </article>
+      <article class="card">
+        <div class="num">02</div><h3>Full renovation</h3><p class="sub">Same footprint</p>
+        <div class="price"><span class="k">Range</span><span class="v">$20,000 – $32,000</span><span class="t">Typically 3–5 weeks</span></div>
+        <ul>
+          <li>New cabinetry, counters, sink, appliances set</li>
+          <li>New flooring throughout, full lighting plan</li>
+          <li>Plumbing and electrical stay roughly where they are</li>
+        </ul>
+        <div class="note">Where most of our completed kitchens land.</div>
+      </article>
+      <article class="card">
+        <div class="num">03</div><h3>Layout changes</h3><p class="sub">Walls, islands, pantries</p>
+        <div class="price"><span class="k">Range</span><span class="v">$32,000 – $46,000+</span><span class="t">Typically 5–8 weeks</span></div>
+        <ul>
+          <li>Island added or relocated, pantry built in</li>
+          <li>Plumbing and electrical moved, wall opened where structure allows</li>
+          <li>Permits typical; structural review where a wall comes out</li>
+        </ul>
+        <div class="note">Moving water and power is the line where a kitchen budget steps up. <b>Ask early.</b></div>
+      </article>
+      <article class="card">
+        <div class="num">04</div><h3>Beyond that</h3><p class="sub">Custom millwork, full gut</p>
+        <div class="price"><span class="k">Range</span><span class="v">Scoped estimate</span><span class="t">We price it line by line</span></div>
+        <ul>
+          <li>Custom cabinetry runs from stock money to millwork money</li>
+          <li>Owner-supplied appliances change everything</li>
+          <li>A flat range we couldn't stand behind would be marketing, not information</li>
+        </ul>
+        <div class="note">You get the same line-item format, where <b>every number is attached to a decision you control</b>.</div>
+      </article>
+    </div>
+  </section>
+
+  <div class="foot">
+    <b>How to read these numbers:</b> they're honest starting points, not bids. A real quote is scope-based — your home's condition, your material choices, and what we find behind the walls all move the number. We'd rather tell you that up front than quote low and revise later.
+    <br><a class="cta" href="https://www.emeraldcityrepairs.com/quote">Get a scoped estimate →</a>
+    <p class="lic">Emerald City Repairs LLC · Licensed, bonded &amp; insured · WA Contractor Lic. #EMERACR760NB · West Seattle · White Center · Burien · South Seattle</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+  var panels = {bath:document.getElementById('bath'), tub:document.getElementById('tub'), kitchen:document.getElementById('kitchen')};
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      tabs.forEach(function(x){ x.setAttribute('aria-selected', String(x===t)); });
+      Object.keys(panels).forEach(function(k){ panels[k].hidden = (k !== t.dataset.panel); });
+    });
+  });
+})();
+</script>
